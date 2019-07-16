@@ -1,15 +1,8 @@
-/**
-* makecode I2C LCM1602-14(Tiny) package for microbit.
-* From ling.
-* http://www.lingsky.net
-*/
 
-/**
- * Tiny I2C LCM1602-14 液晶软件包
- */
 //% weight=100 color=#0020ff icon=""
 namespace I2C_LCD1602_14 {
     let i2cAddr = 0x3E;
+
     //let BK: number      // backlight control Not Use
 
 
@@ -31,15 +24,9 @@ namespace I2C_LCD1602_14 {
         cmd(0x06)
         basic.pause(5)
 
-        Reg(0x00)
-        Reg(0X00)
-        basic.pause(1)
-        Reg(0x08)
-        Reg(0xff)
-        basic.pause(1)
-        Reg(0x01)
-        Reg(0x20)
-        basic.pause(1)
+        Reg(0x00, 0x00)
+        Reg(0x08, 0xff)
+        Reg(0x01, 0x20)
         //setRGB(252,255,255)
     }
     /**
@@ -94,27 +81,26 @@ namespace I2C_LCD1602_14 {
     // send command
     function cmd(d: number) {
         pins.i2cWriteNumber(i2cAddr, 0x8000 | d, NumberFormat.UInt16BE)
-        //basic.pause(1)
+        basic.pause(100)
     }
     // send data
     function dat(d: number) {
         pins.i2cWriteNumber(i2cAddr, 0x4000 | d, NumberFormat.UInt16BE)
-        //basic.pause(1)
+        basic.pause(100)
     }
-    function Reg(d: number) {
-        let i2cAdd = (0xc0 >> 1)
-        pins.i2cWriteNumber(i2cAdd, d, NumberFormat.UInt16BE)
+    function Reg(d: number, n: number) {
+        let buf: number[] = []
+        buf = [d,n]
+        let lcd = pins.createBufferFromArray(buf)
+        let i2cAdd = 0x60
+        pins.i2cWriteBuffer(i2cAdd, lcd)
+        basic.pause(100)
     }
 
     function setRGB(r: number, g: number, b: number) {
-        Reg(0x04)
-        Reg(r)
-        basic.pause(1)
-        Reg(0x03)
-        Reg(g)
-        basic.pause(1)
-        Reg(0x02)
-        Reg(b)
+        Reg(0x04, r)
+        Reg(0x03, g)
+        Reg(0x02, b)
         basic.pause(1)
     }
 }
