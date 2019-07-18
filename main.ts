@@ -45,7 +45,8 @@ namespace I2C_LCD1602_RGB {
             LcdInit();
             setRGB(252, 255, 255);
         }
-        ShowString(n.toString(), x, y);
+        let s = n.toString()
+        ShowString(s.slice(0,9), x, y);
     }
 
     //在液晶的指定位置显示字符串
