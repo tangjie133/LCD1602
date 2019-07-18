@@ -1,39 +1,36 @@
-//LCD_I2C地址
-enum i2cAddr {
-    //% block="0x3e"
-    addr1 = 0x3e,
-    //% block="0x3f"
-    addr2 = 0x3f,
-    //% block="0x20"
-    addr3 = 0x20,
-    //% block="0x62"
-    addr4 = 0x62,
-    //% block="0x27"
-    addr5 = 0x27
+enum clear {
+    //%block="第一行"
+    back1 = 1,
+    //%block="第二行"
+    block2 = 2,
+    //%block="全屏"
+    block3 = 3
 }
-
+let j: number = 0;
+let i: number
 //% weight=100 color=#0020ff 
 namespace I2C_LCD1602_RGB {
     let i2cAddr = 0x3E;
+
     let buf: number[] = [];
-    //% block="初始化RGB液晶的I2C地址|%addr"
-    //% weight=100 
-    export function LcdInit(addr: i2cAddr) {
-        i2cAddr = addr;
+
+
+    export function LcdInit() {
+        i2cAddr = 0x3e;
         basic.pause(50);
         cmd(0x28);      // set 4bit mode
         basic.pause(5);
         cmd(0x28);      // set 4bit mode
         basic.pause(1);
         cmd(0x0c);
-        cmd(0x01);// clear wait more then 2ms
+        //cmd(0x01);// clear wait more then 2ms
         cmd(0x06);
         basic.pause(5);
 
         Reg(0x00, 0x00);
         Reg(0x08, 0xff);
         Reg(0x01, 0x20);
-        setRGB(252, 255, 255);
+        //setRGB(252, 255, 255);
     }
 
     //在液晶的指定位置显示数字
@@ -43,8 +40,12 @@ namespace I2C_LCD1602_RGB {
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
     export function ShowNumber(n: number, x: number, y: number): void {
-        let s = n.toString();
-        ShowString(s, x, y);
+        if (j == 0) {
+            j = 1;
+            LcdInit();
+            setRGB(252, 255, 255);
+        }
+        ShowString(n.toString(), x, y);
     }
 
     //在液晶的指定位置显示字符串
@@ -54,22 +55,48 @@ namespace I2C_LCD1602_RGB {
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
     export function ShowString(s: string, x: number, y: number): void {
+        if (j == 0) {
+            j = 1;
+            LcdInit();
+            setRGB(252, 255, 255);
+        }
         setCursor(x, y);
         for (let i = 0; i < s.length; i++) {
             dat(s.charCodeAt(i));
         }
     }
-
-
-    //清除液晶上显示的内容
-
-    //%  block="清除液晶显示内容"
-    //% weight=50
-    export function clear(): void {
-        cmd(0x01);
-        basic.pause(5);
+    //清屏处理
+    //%block="清除LCD |%c 内容"
+    //%weight=40
+    export function clear(c: clear): void {
+        serial.writeNumber(c)
+        if (c == 1) {
+            for (i = 0; i <= 15; i++)
+                String(" ", i, 0);
+        }
+        if (c == 2) {
+            for (i = 0; i <= 15; i++)
+                String(" ", i, 1);
+        }
+        if (c == 3) {
+            cmd(0x01);
+        }
     }
+    //清除特定位置内容
+    //%weight=30
+    //%block="清除LCD第 |%y行 第|%s位 到 |%x位内容"
+    //%y.min=0 y.max=1
+    //%s.min=0 s.max=15
+    //%x.min=0 x.max=15
+    export function clear1(y: number, s: number, x: number): void {
+        let t: number
+        t = x - s
+        for (i = 0; i <= t; i++) {
 
+            String(" ", s, y);
+            s = s + 1;
+        }
+    }
 
     //通过RGB修改颜色
     //% weight=70
@@ -84,7 +111,9 @@ namespace I2C_LCD1602_RGB {
     //%weight=60
     //% rgb.shadow="colorNumberPicker"
     //% block="设置背景颜色 |%rgb"
-    export function showColor(rgb: number) {
+    export function showColor(rgb: number): void {
+        LcdInit();
+        j = 1;
         let _brightness = 255;
         let r = (rgb >> 16) * (_brightness / 255);
         let g = ((rgb >> 8) & 0xFF) * (_brightness / 255);
@@ -127,4 +156,11 @@ namespace I2C_LCD1602_RGB {
         //basic.pause(1);
     }
 
+
+    function String(s: string, x: number, y: number): void {
+        setCursor(x, y);
+        for (let i = 0; i < s.length; i++) {
+            dat(s.charCodeAt(i));
+        }
+    }
 }
