@@ -13,7 +13,7 @@
 */
 enum clear {
     //%block="first line"
-    back1 = 1,
+    block1 = 1,
     //%block="second line"
     block2 = 2,
     //%block="Full screen"
@@ -22,7 +22,7 @@ enum clear {
 let j: number = 0;
 let i: number
 //% weight=100 color=#0020ff block="RGB_LCD"
-namespace I2C_LCD1602_RGB {
+namespace RGB_LCD {
     let i2cAddr = 0x3E;
     let buf: number[] = [];
     export function LcdInit() {
