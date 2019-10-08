@@ -47,7 +47,7 @@ namespace RGB_LCD {
      * @param  x is a column position ,eg: 0
      * @param  y is a row position ,eg: 0
     */
-    //%  block="Displays number %n|Display position x %x|y %y"
+    //%  block="Displays number %n| position x %x|y %y"
     //% weight=90 
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
@@ -67,7 +67,7 @@ namespace RGB_LCD {
      * @param   y is a row position ,eg: 0
     */
 
-    //%  block="Displays string %s|Displays position x %x|y %y"
+    //%  block="Displays string %s| position x %x|y %y"
     //% weight=90 
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
