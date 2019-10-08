@@ -4,8 +4,8 @@
  * @n [Get the module here](http://www.dfrobot.com.cn/goods-1727.html)
  * @n RGB color font LCD screen can display a variety of color fonts.
  * 
- * @copyright	[DFRobot](http://www.dfrobot.com), 2016
- * @copyright	GNU Lesser General Public License
+ * @copyright    [DFRobot](http://www.dfrobot.com), 2016
+ * @copyright    GNU Lesser General Public License
  * 
  * @author [email](jie.tang@dfrobot.com)
  * @version  V0.1
@@ -21,7 +21,7 @@ enum clear {
 }
 let j: number = 0;
 let i: number
-//% weight=100 color=#0020ff 
+//% weight=100 color=#0020ff block="RGB_LCD"
 namespace I2C_LCD1602_RGB {
     let i2cAddr = 0x3E;
     let buf: number[] = [];
