@@ -1,17 +1,18 @@
 {
-    "name": "LCD1602",
-    "version": "0.0.0",
-    "description": "LCD1602 lib",
+    "name": "RGB_LCD",
+    "version": "0.0.1",
+    "description": "Color display screen ",
     "dependencies": {
         "core": "*",
         "radio": "*"
     },
     "files": [
         "README.md",
-        "main.ts"
+        "RGB_LCD.ts",
+        "_locales/zh-cn/RGB_LCD-strings.json"
     ],
     "testFiles": [
-        "test.ts"
+        
     ],
     "public": false,
     "license": "MIT"

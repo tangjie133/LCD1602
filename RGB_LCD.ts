@@ -1,9 +1,22 @@
+/** 
+ * @file pxt-RGB_LCD/RGB_LCD.ts
+ * @brief DFRobot's obloq makecode library.
+ * @n [Get the module here](http://www.dfrobot.com.cn/goods-1727.html)
+ * @n RGB color font LCD screen can display a variety of color fonts.
+ * 
+ * @copyright	[DFRobot](http://www.dfrobot.com), 2016
+ * @copyright	GNU Lesser General Public License
+ * 
+ * @author [email](jie.tang@dfrobot.com)
+ * @version  V0.1
+ * @date  2019-10-08
+*/
 enum clear {
-    //%block="第一行"
+    //%block="first line"
     back1 = 1,
-    //%block="第二行"
+    //%block="second line"
     block2 = 2,
-    //%block="全屏"
+    //%block="Full screen"
     block3 = 3
 }
 let j: number = 0;
@@ -11,10 +24,7 @@ let i: number
 //% weight=100 color=#0020ff 
 namespace I2C_LCD1602_RGB {
     let i2cAddr = 0x3E;
-
     let buf: number[] = [];
-
-
     export function LcdInit() {
         i2cAddr = 0x3e;
         basic.pause(50);
@@ -26,16 +36,18 @@ namespace I2C_LCD1602_RGB {
         //cmd(0x01);// clear wait more then 2ms
         cmd(0x06);
         basic.pause(5);
-
         Reg(0x00, 0x00);
         Reg(0x08, 0xff);
         Reg(0x01, 0x20);
         //setRGB(252, 255, 255);
     }
-
-    //在液晶的指定位置显示数字
-
-    //%  block="显示 数字 %n|位置 x %x|y %y"
+    /** 
+     * Displays the number in the specified position of the liquid crystal
+     * @param  n is a number will be show ,eg: 2019
+     * @param  x is a column position ,eg: 0
+     * @param  y is a row position ,eg: 0
+    */
+    //%  block="Displays number %n|Display position x %x|y %y"
     //% weight=90 
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
@@ -46,12 +58,16 @@ namespace I2C_LCD1602_RGB {
             setRGB(252, 255, 255);
         }
         let s = n.toString()
-        ShowString(s.slice(0,9), x, y);
+        ShowString(s.slice(0, 9), x, y);
     }
+    /** 
+     * Displays the string in the specified position of the liquid crystal
+     * @param   s is a string will be show ,eg: "DFRobot"
+     * @param   x is a column position ,eg: 0
+     * @param   y is a row position ,eg: 0
+    */
 
-    //在液晶的指定位置显示字符串
-
-    //%  block="显示 字符串 %s|位置 x %x|y %y"
+    //%  block="Displays string %s|Displays position x %x|y %y"
     //% weight=90 
     //% x.min=0 x.max=15
     //% y.min=0 y.max=1
@@ -66,8 +82,10 @@ namespace I2C_LCD1602_RGB {
             dat(s.charCodeAt(i));
         }
     }
-    //清屏处理
-    //%block="清除LCD |%c 内容"
+    /** 
+     * Clear screen
+    */
+    //%block="LCD remove |%c content"
     //%weight=40
     export function clear(c: clear): void {
         serial.writeNumber(c)
@@ -83,9 +101,11 @@ namespace I2C_LCD1602_RGB {
             cmd(0x01);
         }
     }
-    //清除特定位置内容
+    /**
+     * Remove content specified location
+     */
     //%weight=30
-    //%block="清除LCD第 |%y行 第|%s位 到 |%x位内容"
+    //%block="Remove LCD|%y column and|%s row to |%x row"
     //%y.min=0 y.max=1
     //%s.min=0 s.max=15
     //%x.min=0 x.max=15
@@ -93,25 +113,27 @@ namespace I2C_LCD1602_RGB {
         let t: number
         t = x - s
         for (i = 0; i <= t; i++) {
-
             String(" ", s, y);
             s = s + 1;
         }
     }
-
-    //通过RGB修改颜色
+    /**
+     * Set the color
+     */
     //% weight=70
     //% R.min=0 R.max=255
     //% G.min=0 G.max=255
     //% B.min=0 B.max=255
-    //%block="红 %R| 绿 %G| 蓝 %B"
+    //%block="R %R| G %G| B %B"
     export function RGB(R: number, G: number, B: number): number {
         return (R << 16) + (G << 8) + (B);
     }
-    //设置显示屏背景颜色颜色
+    /**
+     * Set screen color
+     */
     //%weight=60
     //% rgb.shadow="colorNumberPicker"
-    //% block="设置背景颜色 |%rgb"
+    //% block="Set screen color |%rgb"
     export function showColor(rgb: number): void {
         LcdInit();
         j = 1;
@@ -121,27 +143,35 @@ namespace I2C_LCD1602_RGB {
         let b = ((rgb) & 0xFF) * (_brightness / 255);
         setRGB(r, g, b);
     }
-
-    // 设置光标位置
+    /** 
+     * Set cursor position
+    */
     function setCursor(col: number, row: number) {
         col = (row == 0 ? col | 0x80 : col | 0xc0);
         cmd(col);
     }
-    // send command
+
+    /**
+     * send command
+     */
     function cmd(d: number) {
         buf = [0x80, d];
         let cmd = pins.createBufferFromArray(buf);
         pins.i2cWriteBuffer(i2cAddr, cmd);
         basic.pause(1);
     }
-    // send data
+    /** 
+     *   send data
+    */
     function dat(d: number) {
         buf = [0x40, d];
         let dat = pins.createBufferFromArray(buf);
         pins.i2cWriteBuffer(i2cAddr, dat);
         basic.pause(1);
     }
-    //send RGB
+    /** 
+     * send RGB
+    */
     function Reg(d: number, n: number) {
         buf = [d, n];
         let lcd = pins.createBufferFromArray(buf);
@@ -149,15 +179,12 @@ namespace I2C_LCD1602_RGB {
         pins.i2cWriteBuffer(i2cAddr_lcd, lcd);
         basic.pause(10);
     }
-
     function setRGB(r: number, g: number, b: number) {
         Reg(0x04, r);
         Reg(0x03, g);
         Reg(0x02, b);
         //basic.pause(1);
     }
-
-
     function String(s: string, x: number, y: number): void {
         setCursor(x, y);
         for (let i = 0; i < s.length; i++) {
